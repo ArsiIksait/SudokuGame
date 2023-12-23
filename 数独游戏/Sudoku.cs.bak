@@ -1,0 +1,160 @@
+﻿namespace SudokuGame
+{
+
+    public class Sudoku
+    {
+
+        public Block[,] Create() // 从空数独创建
+        {
+            var board = new Block[9, 9];
+
+            MakePart(board, 0, 0);
+
+            return board;
+        }
+
+
+        public bool MakePart(Block[,] arr, int x, int y)  // 你看看简单的有没有问题， 我怕刚刚x,y交换出问题
+        {
+            if (arr[x, y].IsPinned)
+            {
+                int newX = x == 8 ? 0 : x + 1;
+                int newY = x == 8 ? y + 1 : y;
+                if (newY > 8)
+                {
+                    return true; // 已经到达末尾, 生成完成
+                }
+
+                if (MakePart(arr, newX, newY))
+                    return true; // 生成成功, 结束递归
+            }
+
+            int ava = 0; // 已经生成过的数字
+            while (true)
+            {
+                if (ava == 0b1111111110)
+                {
+                    arr[x, y].Value = 0; //回溯
+                    return false;
+                }
+
+                var rand = GetRandom();
+                if (((1 << rand) & ava) != 0)
+                {
+                    //生成重复
+                    continue;
+                }
+
+                ava |= 1 << rand;
+                if (!Verify(arr, x, y, rand))
+                    continue;
+
+                arr[y, x].Value = rand;
+
+                int newX = x == 8 ? 0 : x + 1;
+                int newY = x == 8 ? y + 1 : y;
+                if (newY > 8)
+                {
+                    return true; // 已经到达末尾, 生成完成
+                }
+
+                if (MakePart(arr, newX, newY))
+                {
+                    return true; // 生成成功, 结束递归
+                }
+                else
+                {
+                    //被回溯的地方
+                    continue;
+                }
+            }
+        }
+
+        public bool Verify(Block[,] arr, int x, int y, int newValue)
+        {
+            for (int i = 0; i < 9; i++) // 检测当前行是否有相同
+            {
+                if (arr[i, y].Value == newValue)
+                    return false;
+            }
+            for (int i = 0; i < 9; i++) // 检测当前行是否有相同
+            {
+                if (arr[x, i].Value == newValue)
+                    return false;
+            }
+
+            //判断当前宫格是否有重复
+            var xRange = x - x % 3;
+            var yRange = y - y % 3;
+            for (int i = yRange; i < yRange + 3; i++)
+            {
+                for (int j = xRange; j < xRange + 3; j++)
+                {
+                    if (arr[j, i].Value == newValue)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        public bool VerifyAll(Block[,] arr)
+        {
+            arr = (Block[,])arr.Clone();
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    var temp = arr[x, y].Value;
+                    arr[x, y].Value = 0;
+                    if (!Verify(arr, x, y, temp))
+                    {
+                        return false;
+                    }
+                    arr[x, y].Value = temp;
+                }
+            }
+            return true;
+        }
+
+#if DEBUG
+        public void PrintBoard(Block[,] board)
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    Console.Write($"{board[y, x].Value} ");
+                }
+                Console.WriteLine();
+            }
+        }
+        public void ShowBoard(Block[,] board)
+        {
+            var sb = new System.Text.StringBuilder();
+            int c = 1;
+
+            foreach (var i in board)
+            {
+                if (c < 9)
+                {
+                    sb.Append(i.Value.ToString() + "    ");
+                }
+                else
+                {
+                    sb.Append(i.Value.ToString() + '\n');
+                    c = 0;
+                }
+
+                c++;
+            }
+
+            MessageBox.Show(sb.ToString());
+        }
+#endif
+
+        private int GetRandom()
+        {
+            return Random.Shared.Next(1, 10);
+        }
+    }
+}

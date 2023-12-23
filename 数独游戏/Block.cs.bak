@@ -1,0 +1,21 @@
+﻿namespace SudokuGame
+{
+    public class Block
+    {
+        public int Value { get; set; }
+        public bool IsPinned { get; set; }
+
+        public Block(int value, bool isPinned = false)
+        {
+            Value = value;
+            IsPinned = isPinned; 
+        }
+
+        public static implicit operator Block(int value) => new(value);
+        public static implicit operator int(Block block) => block.Value;
+
+        public void Pin() => IsPinned = true;
+
+        public static Block Pin(int value) => new(value, true);
+    }
+}

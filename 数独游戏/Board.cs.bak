@@ -1,0 +1,138 @@
+﻿using System.Collections;
+
+namespace SudokuGame
+{
+    /// <summary>
+    /// 9x9棋盘
+    /// </summary>
+    public class Board : IEnumerable<Block>
+    {
+        public Block[,] Blocks { get; } // [x,y]
+
+        public Block this[int x, int y]
+        {
+            get
+            {
+                return Blocks[x, y];
+            }
+            set
+            {
+                Blocks[x, y] = value; // 不推荐设置
+            }
+        }
+
+        public Board()
+        {
+            Blocks = new Block[9, 9];
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    Blocks[x, y] = new(0);
+                }
+            }
+            
+        }
+
+        /// <summary>
+        /// 清空棋盘
+        /// </summary>
+        /// <param name="keepPinned">是否保留固定的Block</param>
+        public void Clear(bool keepPinned = false)
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    var current = Blocks[x, y];
+                    if (keepPinned)
+                    {
+                        if (!current.IsPinned)
+                        {
+                            current.Value = 0;
+                        }
+                    }
+                    else
+                    {
+                        current.Value = 0;
+                    }
+                }
+            }
+        }
+
+        public IEnumerator<Block> GetEnumerator()
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    yield return Blocks[x, y];
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <summary>
+        /// 返回9个3x3的方格
+        /// </summary>
+        /// <returns></returns>
+        public Range[] GetRanges()
+        {
+            Range[] ranges = new Range[9];
+            ranges[0] = new Range(this, 0, 0);
+            ranges[1] = new Range(this, 0, 3);
+            ranges[2] = new Range(this, 0, 6);
+            ranges[3] = new Range(this, 3, 0);
+            ranges[4] = new Range(this, 3, 3);
+            ranges[5] = new Range(this, 3, 6);
+            ranges[6] = new Range(this, 6, 0);
+            ranges[7] = new Range(this, 6, 3);
+            ranges[8] = new Range(this, 6, 6);
+
+            return ranges;
+        }
+
+        /// <summary>
+        /// 一个3x3范围的方格
+        /// </summary>
+        public class Range
+        {
+            // 0 1 2
+            // 3 4 5
+            // 6 7 8
+            private readonly Block[] ranges;
+            public Block this[int x, int y] // 0,1,2
+            {
+                get
+                {
+                    if (x < 0 || x > 2)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(x));
+                    }
+                    else if (y < 0 || y > 2)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(y));
+                    }
+                    return ranges[y + 3 + x];
+                }
+            }
+
+            public Range(Board board, int x, int y)
+            {
+                var xStart = x - x % 3;
+                var yStart = y - y % 3;
+
+                ranges = new Block[9];
+                var index = 0;
+                for (int yPoint = yStart; yPoint < yStart + 3; yPoint++)
+                {
+                    for (int xPoint = yStart; xPoint < xStart + 3; xPoint++)
+                    {
+                        ranges[index] = board[x, y];
+                    }
+                }
+            }
+        }
+    }
+}

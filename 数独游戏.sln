@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "数独游戏", "数独游戏\数独游戏.csproj", "{99A03589-716B-460F-9A87-18AF920212DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99A03589-716B-460F-9A87-18AF920212DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A03589-716B-460F-9A87-18AF920212DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A03589-716B-460F-9A87-18AF920212DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A03589-716B-460F-9A87-18AF920212DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A209A986-86CC-4DB2-BF94-08304731A425}
+	EndGlobalSection
+EndGlobal
